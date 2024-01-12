@@ -54,9 +54,7 @@ def prepare_input_file(
     if validators.url(file):
         response = requests.get(file, headers=headers, stream=True, timeout=timeout)
         if response.ok:
-            if not reusable:
-                return response.raw
-            return io.BytesIO(response.content)
+            return response.raw if not reusable else io.BytesIO(response.content)
         raise ValueError(f"URL {file} not found.")
     if not os.path.isfile(file):
         raise ValueError(f"File {file} is neither an URL nor an existing file.")
@@ -190,6 +188,5 @@ def get_waveform(file: FileType) -> np.ndarray:
     num_windows = round(len(y) / step)
     waveform = []
     for window in np.array_split(y, num_windows):
-        waveform.append(window.max())
-        waveform.append(window.min())
+        waveform.extend((window.max(), window.min()))
     return np.array(waveform)

@@ -49,10 +49,7 @@ def skip_analytics() -> bool:
         return True
 
     # if opt_in is set (which is not default) dont skip
-    if settings.opt_in:
-        return False
-
-    return settings.opt_out
+    return False if settings.opt_in else settings.opt_out
 
 
 def _get_python_runtime() -> str:
@@ -76,7 +73,7 @@ def _get_python_runtime() -> str:
             pass
 
     except Exception as e:
-        python_runtime = "error get_python_runtime_" + python_runtime + "_" + str(e)
+        python_runtime = f"error get_python_runtime_{python_runtime}_{str(e)}"
         logger.warning("could not determine python runtime", python_runtime)
 
     return f"{python_runtime}_{sys.version}"
@@ -218,7 +215,4 @@ def emit_timed_event(
 
         return _wrapper
 
-    if orig_func is not None:
-        return _decorator(orig_func)
-
-    return _decorator
+    return _decorator(orig_func) if orig_func is not None else _decorator

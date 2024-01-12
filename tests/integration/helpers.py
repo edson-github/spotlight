@@ -67,10 +67,7 @@ def approx(
             and actual.sampling_rate == expected.sampling_rate
         )
     if dtypes.is_image_dtype(dtype):
-        if isinstance(expected, Image):
-            expected_image = expected
-        else:
-            expected_image = Image(expected)  # type: ignore
+        expected_image = expected if isinstance(expected, Image) else Image(expected)
         assert isinstance(actual, Image)
         return approx(expected_image.data, actual.data, "array")
     if dtypes.is_mesh_dtype(dtype):
@@ -97,10 +94,7 @@ def approx(
             )
         )
     if dtypes.is_video_dtype(dtype):
-        if isinstance(expected, Video):
-            expected_video = expected
-        else:
-            expected_video = Video(expected)  # type: ignore
+        expected_video = expected if isinstance(expected, Video) else Video(expected)
         assert isinstance(actual, Video)
         return actual.data == expected_video.data
     raise TypeError(f"Invalid type name {dtype_name} received.")

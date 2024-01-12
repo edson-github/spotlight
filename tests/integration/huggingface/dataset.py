@@ -139,8 +139,7 @@ FEATURES = {
 
 
 def create_hf_dataset() -> datasets.Dataset:
-    ds = datasets.Dataset.from_dict(
+    return datasets.Dataset.from_dict(
         DATA,
         features=datasets.Features(FEATURES),
     )
-    return ds

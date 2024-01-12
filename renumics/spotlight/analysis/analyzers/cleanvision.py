@@ -117,7 +117,7 @@ def analyze_with_cleanvision(
                 image_paths.append(str(path))
                 indices_list.append(i)
 
-            if len(image_paths) == 0:
+            if not image_paths:
                 continue
 
             with open(os.devnull, "w", encoding="utf-8") as devnull:
@@ -131,6 +131,5 @@ def analyze_with_cleanvision(
         # Iterate over all the different issue types
         # and convert them to our internal DataIssue format.
         for cleanvision_key in _issue_types:
-            rows = indices[analysis[cleanvision_key]].tolist()
-            if rows:
+            if rows := indices[analysis[cleanvision_key]].tolist():
                 yield _make_issue(cleanvision_key, column_name, rows)

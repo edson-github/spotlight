@@ -151,7 +151,7 @@ def generate_tallymarks_dataset(
             sequence_start = 15 if label % 4 < 2 else 0
             sequence_stop = 35 if label % 2 == 0 else 50
             dataset.append_row(
-                even=bool(label % 2 == 0),
+                even=label % 2 == 0,
                 number=int(label) if label > 0 else None,
                 length=float(label) if label > 0 else float("nan"),
                 even_text="even" if label % 2 == 0 else "odd",

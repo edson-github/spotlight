@@ -71,8 +71,7 @@ def compare_classification(
         [column1, tab(issues(), weight=40)], weight=80, orientation="horizontal"
     )
 
-    column2_list = []
-    column2_list.append(
+    column2_list = [
         tab(
             confusion_matrix(
                 name="Model 1 confusion matrix",
@@ -86,9 +85,7 @@ def compare_classification(
             ),
             weight=40,
         )
-    )
-
-    # third column: similarity maps
+    ]
     if model1_correct != "":
         if model2_correct != "":
             row2 = tab(
@@ -142,10 +139,13 @@ def compare_classification(
             else:
                 print(f"Type {dtype} not supported by this layout.")
 
-        inspector_fields.append(lenses.scalar(label))
-        inspector_fields.append(lenses.scalar(model1_prediction))
-        inspector_fields.append(lenses.scalar(model2_prediction))
-
+        inspector_fields.extend(
+            (
+                lenses.scalar(label),
+                lenses.scalar(model1_prediction),
+                lenses.scalar(model2_prediction),
+            )
+        )
         inspector_view = inspector("Inspector", lenses=inspector_fields, num_columns=4)
 
     else:
@@ -158,6 +158,4 @@ def compare_classification(
 
     nodes = [half1, half2]
 
-    the_layout = layout.layout(nodes)
-
-    return the_layout
+    return layout.layout(nodes)

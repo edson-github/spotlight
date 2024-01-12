@@ -246,12 +246,8 @@ class Server:
             logger.error(f"Malformed message from client process:\n\t{message}")
             return
 
-        if kind == "startup":
-            self._startup_event.set()
-            self._update(self._app_config)
-        elif kind == "update_complete":
-            self._update_error = message.get("error")
-            self._update_complete_event.set()
+        if kind == "df":
+            self._df_receive_queue.put(message["data"])
         elif kind == "frontend_connected":
             self.connected_frontends = message["data"]
             self._all_frontends_disconnected.clear()
@@ -261,8 +257,12 @@ class Server:
             if self.connected_frontends == 0:
                 self._any_frontend_connected.clear()
                 self._all_frontends_disconnected.set()
-        elif kind == "df":
-            self._df_receive_queue.put(message["data"])
+        elif kind == "startup":
+            self._startup_event.set()
+            self._update(self._app_config)
+        elif kind == "update_complete":
+            self._update_error = message.get("error")
+            self._update_complete_event.set()
         else:
             logger.warning(f"Unknown message from client process:\n\t{message}")
 

@@ -134,5 +134,4 @@ def get_tab(driver: WebDriver, tab_text: str) -> WebElement:
         f"get_tab by text '{tab_text}'",
         10,
     )
-    filtered_tab = button_text.find_element(by=By.XPATH, value="./..")
-    return filtered_tab
+    return button_text.find_element(by=By.XPATH, value="./..")

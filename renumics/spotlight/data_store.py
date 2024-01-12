@@ -125,11 +125,10 @@ class DataStore:
             normalized_values = self._data_source.get_column_values(
                 column_name, indices
             )
-        converted_values = [
+        return [
             convert_to_dtype(value, dtype, simple=simple, check=check)
             for value in normalized_values
         ]
-        return converted_values
 
     def get_converted_value(
         self, column_name: str, index: int, simple: bool = False, check: bool = True
@@ -150,8 +149,7 @@ class DataStore:
         value_hash = hashlib.blake2b(blob).hexdigest()  # type: ignore
         cache_key = f"waveform-v2:{value_hash}"
         try:
-            waveform = external_data_cache[cache_key]
-            return waveform
+            return external_data_cache[cache_key]
         except KeyError:
             ...
         waveform = audio.get_waveform(io.BytesIO(blob))  # type: ignore
@@ -368,6 +366,4 @@ def _guess_array_dtype(
             return spotlight_dtypes.sequence_1d_dtype
     if dtype.ndim == 3 and dtype.shape[-1] in (1, 3, 4):
         return spotlight_dtypes.image_dtype
-    if all(dim is None for dim in dtype.shape):
-        return None
-    return dtype
+    return None if all(dim is None for dim in dtype.shape) else dtype

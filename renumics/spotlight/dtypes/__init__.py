@@ -58,9 +58,7 @@ class DType:
         return self.name
 
     def __eq__(self, other: Any) -> bool:
-        if isinstance(other, DType):
-            return other._name == self._name
-        return False
+        return other._name == self._name if isinstance(other, DType) else False
 
     def __hash__(self) -> int:
         return hash(self._name)
@@ -200,9 +198,7 @@ class ArrayDType(DType):
         self.shape = shape
 
     def __eq__(self, other: Any) -> bool:
-        if isinstance(other, ArrayDType):
-            return other.shape == self.shape
-        return False
+        return other.shape == self.shape if isinstance(other, ArrayDType) else False
 
     def __hash__(self) -> int:
         return hash(self._name) ^ hash(self.shape)
@@ -215,9 +211,7 @@ class ArrayDType(DType):
         """
         Number of array dimensions.
         """
-        if self.shape is None:
-            return 0
-        return len(self.shape)
+        return 0 if self.shape is None else len(self.shape)
 
 
 class EmbeddingDType(DType):
@@ -491,9 +485,7 @@ DTypeMap = Dict[str, DType]
 def create_dtype(x: Any) -> DType:
     if isinstance(x, DType):
         return x
-    if isinstance(x, str):
-        return ALIASES[x.lower()]
-    return ALIASES[x]
+    return ALIASES[x.lower()] if isinstance(x, str) else ALIASES[x]
 
 
 def is_bool_dtype(dtype: DType) -> bool:

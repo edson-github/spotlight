@@ -82,9 +82,10 @@ def _random_datetimes(num_rows: int, seed: int) -> np.ndarray:
     np.random.seed(seed)
     microseconds = np.random.randint(0, 999999, num_rows).tolist()
     min_datetime = datetime.datetime.min
-    datetimes = []
-    for day, second, microsecond in zip(days, seconds, microseconds):
-        datetimes.append(min_datetime + datetime.timedelta(day, second, microsecond))
+    datetimes = [
+        min_datetime + datetime.timedelta(day, second, microsecond)
+        for day, second, microsecond in zip(days, seconds, microseconds)
+    ]
     data = np.array(datetimes, dtype=object)
     null_indices = np.random.randint(0, num_rows, num_rows // 10)
     data[null_indices] = None
@@ -94,8 +95,7 @@ def _random_datetimes(num_rows: int, seed: int) -> np.ndarray:
 def _random_categories(num_rows: int, seed: int) -> np.ndarray:
     categories = np.append("", _random_strings(NUM_CATEGORIES - 1, seed))
     np.random.seed(seed)
-    data = np.random.choice(categories, num_rows)
-    return data
+    return np.random.choice(categories, num_rows)
 
 
 def _random_windows(num_rows: int, seed: int) -> np.ndarray:

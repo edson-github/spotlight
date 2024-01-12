@@ -50,16 +50,14 @@ def debug_classification(
         [column1, tab(issues(), weight=40)], weight=80, orientation="horizontal"
     )
 
-    column2_list = []
-    column2_list.append(
+    column2_list = [
         tab(
             confusion_matrix(
                 name="Confusion matrix", x_column=label, y_column=prediction
             ),
             weight=40,
         )
-    )
-
+    ]
     # second column: confusion matric, feature histograms (optional), embedding (optional)
     if features is not None:
         histogram_list = []
@@ -67,7 +65,7 @@ def debug_classification(
             if idx > 2:
                 break
             h = histogram(
-                name="Histogram {}".format(feature),
+                name=f"Histogram {feature}",
                 column=feature,
                 stack_by_column=label,
             )
@@ -105,11 +103,9 @@ def debug_classification(
             elif is_image_dtype(dtype):
                 inspector_fields.append(lenses.image(item))
             else:
-                print("Type {} not supported by this layout.".format(dtype))
+                print(f"Type {dtype} not supported by this layout.")
 
-        inspector_fields.append(lenses.scalar(label))
-        inspector_fields.append(lenses.scalar(prediction))
-
+        inspector_fields.extend((lenses.scalar(label), lenses.scalar(prediction)))
         inspector_view = inspector("Inspector", lenses=inspector_fields, num_columns=4)
 
     else:
@@ -122,6 +118,4 @@ def debug_classification(
 
     nodes = [half1, half2]
 
-    the_layout = layout.layout(nodes)
-
-    return the_layout
+    return layout.layout(nodes)

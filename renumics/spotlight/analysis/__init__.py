@@ -2,6 +2,7 @@
 Dataset Analysis
 """
 
+
 import importlib
 import pkgutil
 from typing import List
@@ -16,7 +17,7 @@ from . import analyzers as analyzers_namespace
 
 # import all modules in .analyzers
 for module_info in pkgutil.iter_modules(analyzers_namespace.__path__):
-    importlib.import_module(analyzers_namespace.__name__ + "." + module_info.name)
+    importlib.import_module(f"{analyzers_namespace.__name__}.{module_info.name}")
 
 
 def find_issues(data_store: DataStore, columns: List[str]) -> List[DataIssue]:

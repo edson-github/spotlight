@@ -11,6 +11,4 @@ def prepare_hugging_face_dict(x: Dict) -> Any:
     if x.keys() != {"bytes", "path"}:
         return x
     blob = x["bytes"]
-    if blob is not None:
-        return blob
-    return x["path"]
+    return blob if blob is not None else x["path"]

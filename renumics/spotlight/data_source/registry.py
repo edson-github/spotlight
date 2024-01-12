@@ -24,9 +24,7 @@ def create_datasource(source: Any) -> DataSource:
     if is_pathtype(source):
         path = Path(source)
         if path.exists():
-            keys.append(path.suffix)
-            keys.append(Path)
-
+            keys.extend((path.suffix, Path))
     keys.append(type(source))
 
     for key in keys:

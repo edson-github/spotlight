@@ -11,10 +11,8 @@ def get_data_tags_from_src(path: str) -> List[str]:
         print(ts_file)
         with open(ts_file, encoding="utf-8") as file:
             text = "\n".join(file.readlines())
-            matches = re.findall('(data-test-tag=")([a-z0-9-]*)(")', text)
-            if matches:
-                for match in matches:
-                    tags.append(match[1])
+            if matches := re.findall('(data-test-tag=")([a-z0-9-]*)(")', text):
+                tags.extend(match[1] for match in matches)
     return tags
 
 

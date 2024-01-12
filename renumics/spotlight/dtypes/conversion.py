@@ -201,9 +201,7 @@ def convert_to_dtype(
             return float(value)  # type: ignore
         if dtypes.is_str_dtype(dtype):
             str_value = str(value)
-            if simple and len(str_value) > 100:
-                return str_value[:97] + "..."
-            return str_value
+            return f"{str_value[:97]}..." if simple and len(str_value) > 100 else str_value
         if dtypes.is_array_dtype(dtype):
             if simple:
                 return "[...]"
@@ -238,9 +236,7 @@ def _(value: datetime.datetime, _: dtypes.DType) -> datetime.datetime:
 
 @convert("datetime")
 def _(value: Union[str, np.str_], _: dtypes.DType) -> Optional[datetime.datetime]:
-    if value == "":
-        return None
-    return datetime.datetime.fromisoformat(value)
+    return None if value == "" else datetime.datetime.fromisoformat(value)
 
 
 @convert("datetime")
@@ -251,9 +247,7 @@ def _(value: np.datetime64, _: dtypes.DType) -> Optional[datetime.datetime]:
 @convert("Category")
 def _(value: Union[str, np.str_], dtype: dtypes.CategoryDType) -> int:
     categories = dtype.categories
-    if not categories:
-        return -1
-    return categories[value]
+    return -1 if not categories else categories[value]
 
 
 @convert("Category")
@@ -510,8 +504,7 @@ def read_external_value(
     if target_format is not None:
         cache_key += f"/{target_format}"
     try:
-        value = np.void(external_data_cache[cache_key])
-        return value
+        return np.void(external_data_cache[cache_key])
     except KeyError:
         ...
 
