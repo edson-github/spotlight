@@ -2,6 +2,7 @@
 Dataset Analysis
 """
 
+
 import importlib
 import pkgutil
 from typing import Dict, List
@@ -16,7 +17,7 @@ from . import embedders as embedders_namespace
 
 # import all modules in .embedders
 for module_info in pkgutil.iter_modules(embedders_namespace.__path__):
-    importlib.import_module(embedders_namespace.__name__ + "." + module_info.name)
+    importlib.import_module(f"{embedders_namespace.__name__}.{module_info.name}")
 
 
 def create_embedders(data_store: DataStore, columns: List[str]) -> Dict[str, Embedder]:

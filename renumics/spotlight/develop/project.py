@@ -20,10 +20,7 @@ def _find_upwards(filename: str, folder: Path) -> Optional[Path]:
         return None
 
     path = folder / filename
-    if path.exists():
-        return path
-
-    return _find_upwards(filename, folder.parent)
+    return path if path.exists() else _find_upwards(filename, folder.parent)
 
 
 @dataclasses.dataclass
@@ -57,11 +54,7 @@ def get_project_info() -> ProjectInfo:
 
     project_name = pyproject_content["tool"]["poetry"]["name"]
 
-    if project_name == "renumics-spotlight":
-        project_type = "core"
-    else:
-        project_type = "plugin"
-
+    project_type = "core" if project_name == "renumics-spotlight" else "plugin"
     return ProjectInfo(name=project_name, type=project_type, root=pyproject_toml.parent)
 
 

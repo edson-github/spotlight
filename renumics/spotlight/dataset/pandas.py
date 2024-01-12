@@ -224,16 +224,14 @@ def infer_array_dtype(value: np.ndarray) -> dtypes.DType:
     """
     Infer dtype of a numpy array
     """
-    if value.ndim == 3:
-        if value.shape[-1] in (1, 3, 4):
-            return dtypes.image_dtype
+    if value.ndim == 1:
+        return dtypes.window_dtype if len(value) == 2 else dtypes.embedding_dtype
     elif value.ndim == 2:
         if value.shape[0] == 2 or value.shape[1] == 2:
             return dtypes.sequence_1d_dtype
-    elif value.ndim == 1:
-        if len(value) == 2:
-            return dtypes.window_dtype
-        return dtypes.embedding_dtype
+    elif value.ndim == 3:
+        if value.shape[-1] in (1, 3, 4):
+            return dtypes.image_dtype
     return dtypes.array_dtype
 
 

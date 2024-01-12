@@ -53,14 +53,15 @@ async def _(name: str) -> Response:
     """
 
     plugins = load_plugins()
-    plugin = next((p for p in plugins if p.name == name), None)
-
-    if not plugin:
+    if plugin := next((p for p in plugins if p.name == name), None):
+        return (
+            Response("export default {}", media_type="text/javascript")
+            if plugin.frontend_entrypoint is None
+            else FileResponse(
+                plugin.frontend_entrypoint, media_type="text/javascript"
+            )
+        )
+    else:
         raise Problem(
             title="Plugin not found", detail=f"Can't find plugin with name: {name}."
         )
-
-    if plugin.frontend_entrypoint is None:
-        return Response("export default {}", media_type="text/javascript")
-
-    return FileResponse(plugin.frontend_entrypoint, media_type="text/javascript")

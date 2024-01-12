@@ -86,16 +86,14 @@ class TaskManager:
 
         tasks_to_remove = []
 
-        if name is not None and tag is not None:
-            for task in self.tasks:
+        for task in self.tasks:
+            if name is not None and tag is not None:
                 if task.name == name and task.tag == tag:
                     tasks_to_remove.append(task)
-        elif name is not None:
-            for task in self.tasks:
+            elif name is not None:
                 if task.name == name:
                     tasks_to_remove.append(task)
-        elif tag is not None:
-            for task in self.tasks:
+            elif tag is not None:
                 if task.tag == tag:
                     tasks_to_remove.append(task)
 

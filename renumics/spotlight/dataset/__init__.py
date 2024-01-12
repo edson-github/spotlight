@@ -278,7 +278,7 @@ class Dataset:
         self._check_mode(mode)
         self._mode = mode
         dirpath = os.path.dirname(self._filepath)
-        if self._mode in ("w", "w-", "x", "a"):
+        if self._mode in {"w", "w-", "x", "a"}:
             os.makedirs(dirpath, exist_ok=True)
         elif not os.path.isdir(dirpath):
             raise FileNotFoundError(f"File {filepath} does not exist.")
@@ -610,24 +610,25 @@ class Dataset:
         """
         Close file.
         """
-        if not self._closed:
-            if self._is_writable():
-                current_time = get_current_datetime().isoformat()
-                raw_attrs = self._h5_file.attrs
-                # Version could be `None`, but *shouldn't* be.
-                raw_attrs["version"] = __version__
-                raw_attrs["last_edited_by"] = self._get_username()
-                raw_attrs["last_edited_at"] = current_time
-                if "created" not in raw_attrs:
-                    raw_attrs["created"] = __version__
-                if "created_by" not in raw_attrs:
-                    raw_attrs["created_by"] = self._get_username()
-                if "created_at" not in raw_attrs:
-                    raw_attrs["created_at"] = current_time
-            self._h5_file.close()
-            self._closed = True
-            self._column_names = set()
-            self._length = 0
+        if self._closed:
+            return
+        if self._is_writable():
+            current_time = get_current_datetime().isoformat()
+            raw_attrs = self._h5_file.attrs
+            # Version could be `None`, but *shouldn't* be.
+            raw_attrs["version"] = __version__
+            raw_attrs["last_edited_by"] = self._get_username()
+            raw_attrs["last_edited_at"] = current_time
+            if "created" not in raw_attrs:
+                raw_attrs["created"] = __version__
+            if "created_by" not in raw_attrs:
+                raw_attrs["created_by"] = self._get_username()
+            if "created_at" not in raw_attrs:
+                raw_attrs["created_at"] = current_time
+        self._h5_file.close()
+        self._closed = True
+        self._column_names = set()
+        self._length = 0
 
     def keys(self) -> List[str]:
         """
@@ -739,10 +740,7 @@ class Dataset:
                 "DataFrame's columns are not unique"
             )
 
-        if index:
-            df = df.reset_index(level=df.index.names)  # type: ignore
-        else:
-            df = df.copy()
+        df = df.reset_index(level=df.index.names) if index else df.copy()
         df.columns = pd.Index([str(column) for column in df.columns])
 
         if dtypes is None:
@@ -1513,7 +1511,7 @@ class Dataset:
             Find an example usage in `renumics.spotlight.media.Audio`.
         """
         attrs = {}
-        if lossy is None and external is False:
+        if lossy is None and not external:
             lossy = False
         if lossy is not None:
             attrs["lossy"] = lossy
@@ -2332,7 +2330,7 @@ class Dataset:
             self._assert_valid_attribute(attribute_name, attribute_value, name)
 
         if "categories" in attrs:
-            if any(not v == np.int32(v) for v in attrs["categories"].values()):
+            if any(v != np.int32(v) for v in attrs["categories"].values()):
                 raise exceptions.InvalidAttributeError(
                     f'Attribute "categories" for column "{name}" contains '
                     "invalid dict - values must be convertible to np.int32."
@@ -3102,13 +3100,11 @@ class Dataset:
             "Keys of `values` mismatch column names, even with updated "
             "default values."
         )
-        missing_keys = self._column_names - set(values.keys())
-        if missing_keys:
+        if missing_keys := self._column_names - set(values.keys()):
             error_message += (
                 '\n\tKeys "' + '", "'.join(missing_keys) + '" missing in ' "`values`."
             )
-        excessive_keys = set(values.keys()) - self._column_names
-        if excessive_keys:
+        if excessive_keys := set(values.keys()) - self._column_names:
             error_message += (
                 '\n\tColumns "'
                 + '", "'.join(excessive_keys)
@@ -3145,8 +3141,7 @@ class Dataset:
                 except KeyError:
                     pass  # Don't need to search/update, so encode value as usual.
             encoded_value = self._encode_ref_value(value, column, dtype)
-            ref = self._write_ref_value(encoded_value, column, column_name)
-            return ref
+            return self._write_ref_value(encoded_value, column, column_name)
         value = cast(SimpleColumnInputType, value)
         return self._encode_simple_value(value, column, dtype, column_name)
 
@@ -3217,9 +3212,7 @@ class Dataset:
             return value.tolist()
         if isinstance(value, np.datetime64):
             value = value.astype(datetime)
-        if isinstance(value, datetime):
-            return value.isoformat()
-        return value
+        return value.isoformat() if isinstance(value, datetime) else value
 
     def _write_ref_value(
         self,
@@ -3235,10 +3228,7 @@ class Dataset:
         h5_dataset = self._h5_file.create_dataset(
             f"__group__/{column_name}/{dataset_name}", data=value
         )
-        if h5py.check_ref_dtype(column.dtype):
-            ref = h5_dataset.ref  # Legacy handling.
-        else:
-            ref = dataset_name
+        ref = h5_dataset.ref if h5py.check_ref_dtype(column.dtype) else dataset_name
         return ref
 
     def _encode_ref_value(
@@ -3404,9 +3394,7 @@ class Dataset:
             return cast(np.ndarray, value)
         if spotlight_dtypes.is_embedding_dtype(dtype):
             value = cast(np.ndarray, value)
-            if len(value) == 0:
-                return None
-            return value
+            return None if len(value) == 0 else value
         if spotlight_dtypes.is_category_dtype(dtype):
             if dtype.inverted_categories is None:
                 return None
@@ -3415,9 +3403,7 @@ class Dataset:
             value = value.decode("utf-8")
         if spotlight_dtypes.is_datetime_dtype(dtype):
             value = cast(str, value)
-            if value == "":
-                return None
-            return datetime.fromisoformat(value)
+            return None if value == "" else datetime.fromisoformat(value)
         return VALUE_TYPE_BY_DTYPE_NAME[dtype.name](value)  # type: ignore
 
     def _decode_ref_value(

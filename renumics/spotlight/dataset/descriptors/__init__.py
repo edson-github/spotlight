@@ -92,8 +92,7 @@ def catch22(
     column_names = []
     if as_float_columns:
         feature_names = pycatch22.catch22_all([0], catch24)["names"]
-        for name in feature_names:
-            column_names.append("-".join((column, suffix, name)))
+        column_names.extend("-".join((column, suffix, name)) for name in feature_names)
     else:
         column_names.append(f"{column}-{suffix}")
     if inplace and not overwrite:
@@ -118,9 +117,10 @@ def catch22(
     if len(data) == 0:
         if inplace:
             return None
-        return np.empty((0, 24 if catch24 else 22), dtype=data.dtype), np.full(
-            len(dataset), False
-        )
+        else:
+            return np.empty((0, 24 if catch24 else 22), dtype=data.dtype), np.full(
+                len(dataset), False
+            )
 
     embeddings = np.array(
         [pycatch22.catch22_all(sample, catch24)["values"] for sample in data],

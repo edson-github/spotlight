@@ -180,10 +180,7 @@ class Viewer:
 
         if is_pathtype(dataset):
             dataset = Path(dataset).absolute()
-            if dataset.is_dir():
-                project_root = dataset
-            else:
-                project_root = dataset.parent
+            project_root = dataset if dataset.is_dir() else dataset.parent
         else:
             project_root = None
 
@@ -291,10 +288,7 @@ class Viewer:
         """
         Get served `DataFrame` if a `DataFrame` is served, `None` otherwise.
         """
-        if self._server:
-            return self._server.get_df()
-
-        return None
+        return self._server.get_df() if self._server else None
 
     @property
     def host(self) -> str:
@@ -308,9 +302,7 @@ class Viewer:
         """
         The port the viewer is running on.
         """
-        if not self._server:
-            return None
-        return self._server.port
+        return None if not self._server else self._server.port
 
     @property
     def url(self) -> str:

@@ -85,7 +85,7 @@ def pad_bin_data(bin_data: bytes, bound: int = 4) -> bytes:
     """
     Pad binary data to the given bound.
     """
-    bound = int(bound)
+    bound = bound
     if bound < 2:
         return bin_data
     data_length = len(bin_data)
@@ -158,14 +158,13 @@ def decode_gltf_arrays(gltf: pygltflib.GLTF2) -> List[np.ndarray]:
     """
     bin_data = gltf.binary_blob()
 
-    buffer_views = []
-    for buffer_view in gltf.bufferViews:
-        buffer_views.append(
-            bin_data[
-                buffer_view.byteOffset : buffer_view.byteOffset + buffer_view.byteLength
-            ]
-        )
-
+    buffer_views = [
+        bin_data[
+            buffer_view.byteOffset : buffer_view.byteOffset
+            + buffer_view.byteLength
+        ]
+        for buffer_view in gltf.bufferViews
+    ]
     arrays = []
     for accessor in gltf.accessors:
         accessor_bin_data = buffer_views[accessor.bufferView]

@@ -18,7 +18,7 @@ def test_external_data_cache(non_existing_image_df_viewer: spotlight.Viewer) -> 
     image_path = non_existing_image_df_viewer.df["image"][0]
     app_url = str(non_existing_image_df_viewer)
 
-    response = requests.get(app_url + "api/table/", timeout=5)
+    response = requests.get(f"{app_url}api/table/", timeout=5)
     assert response.status_code == 200
     assert len(response.text) > 200
     generation_id = json.loads(response.text)["generation_id"]

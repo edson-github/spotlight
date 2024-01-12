@@ -194,7 +194,7 @@ class Mesh(FileMediaType):
             self._points, bin_data, buffer_views, accessors
         )
         for attr_name, point_attr in self._point_attributes.items():
-            mesh_primitive_attributes_kwargs["_" + attr_name] = len(buffer_views)
+            mesh_primitive_attributes_kwargs[f"_{attr_name}"] = len(buffer_views)
             bin_data, buffer_views, accessors = gltf.encode_gltf_array(
                 point_attr, bin_data, buffer_views, accessors
             )
@@ -480,7 +480,7 @@ def triangulate(
                     (attr, quadrangle_attr, quadrangle_attr), axis=1
                 )
 
-    for attr_name, attr in attrs.items():
+    for attr in attrs.values():
         if attr.shape[1] != len(trias):
             raise ValueError(
                 f"Values of attributes should have the same length as "

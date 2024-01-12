@@ -50,8 +50,7 @@ class HuggingfaceDataSource(DataSource):
         }
         self._guessed_dtypes = {}
         for col, feat in self._dataset.features.items():
-            guessed_dtype = _guess_semantic_dtype(feat)
-            if guessed_dtype:
+            if guessed_dtype := _guess_semantic_dtype(feat):
                 self._guessed_dtypes[col] = guessed_dtype
 
     @property
@@ -96,7 +95,7 @@ class HuggingfaceDataSource(DataSource):
 
         feature = self._dataset.features[column_name]
 
-        if isinstance(feature, datasets.Audio) or isinstance(feature, datasets.Image):
+        if isinstance(feature, (datasets.Audio, datasets.Image)):
             return np.array(
                 [
                     value["path"].as_py()

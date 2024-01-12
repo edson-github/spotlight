@@ -55,21 +55,21 @@ def test_getitem(fancy_indexing_dataset: Dataset) -> None:
         length + 10,
         length * 2,
     ):
-        # Use as step.
-        good_indices.append(slice(None, None, arg))
-        good_indices.append(slice(0, None, arg))
-        good_indices.append(slice(None, length, arg))
-        # Use as start.
-        good_indices.append(slice(arg, None, None))
-        good_indices.append(slice(arg, length, None))
-        good_indices.append(slice(arg, None, 3))
-        good_indices.append(slice(arg, length, 3))
-        # Use as stop.
-        good_indices.append(slice(0, arg, None))
-        good_indices.append(slice(None, arg, None))
-        good_indices.append(slice(0, arg, 3))
-        good_indices.append(slice(None, arg, 3))
-
+        good_indices.extend(
+            (
+                slice(None, None, arg),
+                slice(0, None, arg),
+                slice(None, length, arg),
+                slice(arg, None, None),
+                slice(arg, length, None),
+                slice(arg, None, 3),
+                slice(arg, length, 3),
+                slice(0, arg, None),
+                slice(None, arg, None),
+                slice(0, arg, 3),
+                slice(None, arg, 3),
+            )
+        )
     # Duplicated indices.
     all_indices = np.arange(-length, length)
     for length_ in (length // 4, length // 2, length, length * 2, length * 4):
@@ -274,21 +274,21 @@ def test_setitem(fancy_indexing_dataset: Dataset) -> None:
         length + 10,
         length * 2,
     ):
-        # Use as step.
-        good_indices.append(slice(None, None, arg))
-        good_indices.append(slice(0, None, arg))
-        good_indices.append(slice(None, length, arg))
-        # Use as start.
-        good_indices.append(slice(arg, None, None))
-        good_indices.append(slice(arg, length, None))
-        good_indices.append(slice(arg, None, 3))
-        good_indices.append(slice(arg, length, 3))
-        # Use as stop.
-        good_indices.append(slice(0, arg, None))
-        good_indices.append(slice(None, arg, None))
-        good_indices.append(slice(0, arg, 3))
-        good_indices.append(slice(None, arg, 3))
-
+        good_indices.extend(
+            (
+                slice(None, None, arg),
+                slice(0, None, arg),
+                slice(None, length, arg),
+                slice(arg, None, None),
+                slice(arg, length, None),
+                slice(arg, None, 3),
+                slice(arg, length, 3),
+                slice(0, arg, None),
+                slice(None, arg, None),
+                slice(0, arg, 3),
+                slice(None, arg, 3),
+            )
+        )
     for indices in good_indices:
         last_edited_at_indices = np.unique(all_indices[indices])
         for values in (

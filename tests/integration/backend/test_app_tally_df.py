@@ -72,7 +72,7 @@ def test_get_invalid_external_value(
 def test_read_table(viewer_tally_df: spotlight.Viewer) -> None:
     """test full table can be read an returns data"""
     app_url = f"http://{viewer_tally_df.host}:{viewer_tally_df.port}"
-    response = requests.get(app_url + "/api/table/", timeout=5)
+    response = requests.get(f"{app_url}/api/table/", timeout=5)
     assert response.status_code == 200
     assert len(response.text) > 1000
     json_data = json.loads(response.text)

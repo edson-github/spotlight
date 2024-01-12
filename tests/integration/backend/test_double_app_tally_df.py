@@ -22,7 +22,7 @@ def test_read_table(
     viewer_tally_df = viewer_double_tally_df[0]
     app_url = f"http://{viewer_tally_df.host}:{viewer_tally_df.port}"
 
-    response = requests.get(app_url + "/api/table/", timeout=5)
+    response = requests.get(f"{app_url}/api/table/", timeout=5)
     assert response.status_code == 200
     assert len(response.text) > 1000
     json_data1 = json.loads((response.text))
@@ -30,7 +30,7 @@ def test_read_table(
     viewer_tally_df = viewer_double_tally_df[1]
     app_url = f"http://{viewer_tally_df.host}:{viewer_tally_df.port}"
 
-    response = requests.get(app_url + "/api/table/", timeout=5)
+    response = requests.get(f"{app_url}/api/table/", timeout=5)
     assert response.status_code == 200
     assert len(response.text) > 1000
     json_data2 = json.loads((response.text))

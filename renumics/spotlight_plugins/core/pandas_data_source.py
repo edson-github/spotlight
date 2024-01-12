@@ -93,7 +93,7 @@ class PandasDataSource(DataSource):
         if not df.columns.is_unique:
             raise DatasetColumnsNotUnique()
         self._generation_id = 0
-        self._uid = str(id(df))
+        self._uid = id(df)
         self._df = df.convert_dtypes()
         self._intermediate_dtypes = {
             # TODO: convert column name

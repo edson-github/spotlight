@@ -55,7 +55,7 @@ def load_plugins() -> List[Plugin]:
 
     plugins = {}
     for _, name, _ in pkgutil.iter_modules(plugins_namespace.__path__):
-        module = importlib.import_module(plugins_namespace.__name__ + "." + name)
+        module = importlib.import_module(f"{plugins_namespace.__name__}.{name}")
 
         project = get_project_info()
 
